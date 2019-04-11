@@ -52,5 +52,20 @@ namespace CSharpTest
 
             Assert.IsTrue(result.Equals(new DateTime(2017, 4, 28)));
         }
+        [TestMethod]
+        public void TestIncorrectRangeDaysCount()
+        {
+            DateTime startDate = new DateTime(2014, 12, 1);
+            int count = -1;
+
+            try
+            {
+                DateTime result = new WorkDayCalculator().Calculate(startDate, count, null);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                StringAssert.Contains(ex.Message, "dayCount");
+            }            
+        }
     }
 }
