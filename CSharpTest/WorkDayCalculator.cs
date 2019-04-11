@@ -30,7 +30,7 @@ namespace CSharpTest
         /// <summary>
         /// Checks if DateTime is a weekend
         /// </summary>
-        private bool IsWeekEnd(DateTime day, WeekEnd[] weekEnds)
+        protected virtual bool IsWeekEnd(DateTime day, WeekEnd[] weekEnds)
         {
             //using Linq
             //return weekEnds.FirstOrDefault(a => day >= a.StartDate && day <= a.EndDate) != null;
