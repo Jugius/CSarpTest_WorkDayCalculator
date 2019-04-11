@@ -66,6 +66,6 @@ namespace CSharpTest
             {
                 StringAssert.Contains(ex.Message, "dayCount");
             }            
-        }
+        }      
     }
 }
