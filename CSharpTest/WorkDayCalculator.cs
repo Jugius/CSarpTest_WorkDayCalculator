@@ -6,41 +6,45 @@ namespace CSharpTest
     {
         public DateTime Calculate(DateTime startDate, int dayCount, WeekEnd[] weekEnds)
         {
-            if (dayCount < 0) throw new ArgumentOutOfRangeException("dayCount");
-            if (dayCount <= 1) return startDate;
+            // !!!This logic MUST be clarified with the Tl
+            // since the start day is the first day, the number of days is less than 1 is an error
+            if (dayCount < 1) throw new ArgumentOutOfRangeException(nameof(dayCount), "Duration must be at least 1 day.");
+
+            // if there are no weekEnds, return the start date plus duration
             if (weekEnds == null || weekEnds.Length == 0) return startDate.AddDays(dayCount - 1);
 
-            int workingDays = 1;
             DateTime checkingDay = startDate;
+            int daysLeft = dayCount - 1;
 
-            while (workingDays < dayCount)
+            foreach (WeekEnd weekEnd in weekEnds)
             {
-                checkingDay = checkingDay.AddDays(1);
-                if (!IsWeekEnd(checkingDay, weekEnds))
+                if (checkingDay < weekEnd.StartDate)
                 {
-                    workingDays++;
+                    var daysToStartNextWeekend = (int)(weekEnd.StartDate - checkingDay).TotalDays;
+                    if (daysLeft < daysToStartNextWeekend)
+                    {
+                        return checkingDay.AddDays(daysLeft);
+                    }
+                    else if (daysLeft == daysToStartNextWeekend)
+                    {
+                        return weekEnd.EndDate.AddDays(1);
+                    }
+                    else
+                    {
+                        daysLeft -= daysToStartNextWeekend;
+                        checkingDay = weekEnd.EndDate.AddDays(1);
+                    }
+                }
+                else if (checkingDay > weekEnd.EndDate)
+                {
+                    continue;
+                }
+                else
+                {
+                    checkingDay = weekEnd.EndDate.AddDays(1);
                 }
             }
-            return checkingDay;
-        }
-        /// <summary>
-        /// Checks if DateTime is a weekend
-        /// </summary>
-        protected virtual bool IsWeekEnd(DateTime day, WeekEnd[] weekEnds)
-        {
-            //using Linq
-            //return weekEnds.FirstOrDefault(a => day >= a.StartDate && day <= a.EndDate) != null;
-
-            bool result = false;
-            foreach (var weekEnd in weekEnds)
-            {
-                if (day >= weekEnd.StartDate && day <= weekEnd.EndDate)
-                {
-                    result = true;
-                    break;
-                }
-            }
-            return result;
-        }
+            return checkingDay.AddDays(daysLeft);
+        }       
     }
 }
