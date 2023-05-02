@@ -1,6 +1,7 @@
-# CSarpTest_WorkDayCalculator
+# WorkDayCalculator
 
 Test task
+
 You need to implement C# method according to the following description:
 To the method input you receive a:
 1. start date,
